@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qantas Points vs Credit Card Fee Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #E40000; /* Qantas red */
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #E40000; /* Qantas red */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #B30000;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .worth-it {
+            color: green;
+            font-weight: bold;
+        }
+        .not-worth-it {
+            color: red;
+            font-weight: bold;
+        }
+        .divider {
+            border-top: 1px solid #ddd;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Qantas Points vs Credit Card Fee Calculator</h1>
+    <p>Determine if using your credit card to pay for a car purchase is worth it based on the Qantas points earned.</p>
+    
+    <div class="form-group">
+        <label for="carPrice">Car Price ($):</label>
+        <input type="number" id="carPrice" placeholder="Enter car price" min="0">
+    </div>
+    
+    <div class="form-group">
+        <label for="cardFee">Credit Card Fee (%):</label>
+        <input type="number" id="cardFee" placeholder="Enter credit card fee percentage" step="0.01" min="0">
+    </div>
+    
+    <div class="form-group">
+        <label for="pointsRate">Points Earned per $1 Spent:</label>
+        <input type="number" id="pointsRate" value="1" step="0.1" min="0">
+    </div>
+    
+    <div class="form-group">
+        <label for="pointsValue">Value per Qantas Point ($):</label>
+        <input type="number" id="pointsValue" value="0.015" step="0.001" min="0">
+    </div>
+    
+    <button onclick="calculate()">Calculate</button>
+    
+    <div id="result">
+        <h2>Results</h2>
+        <p><strong>Car Price:</strong> $<span id="resultPrice"></span></p>
+        <p><strong>Credit Card Fee:</strong> $<span id="resultFee"></span> (<span id="resultFeePercent"></span>%)</p>
+        <div class="divider"></div>
+        <p><strong>Qantas Points Earned:</strong> <span id="resultPoints"></span></p>
+        <p><strong>Dollar Value of Points:</strong> $<span id="resultPointsValue"></span></p>
+        <div class="divider"></div>
+        <p id="conclusion" style="font-size: 18px;"></p>
+    </div>
+
+    <script>
+        function calculate() {
+            // Get input values
+            const carPrice = parseFloat(document.getElementById('carPrice').value);
+            const cardFeePercent = parseFloat(document.getElementById('cardFee').value);
+            const pointsRate = parseFloat(document.getElementById('pointsRate').value);
+            const pointsValue = parseFloat(document.getElementById('pointsValue').value);
+            
+            // Validate inputs
+            if (isNaN(carPrice) || isNaN(cardFeePercent) || isNaN(pointsRate) || isNaN(pointsValue)) {
+                alert('Please enter valid numbers for all fields');
+                return;
+            }
+            
+            // Calculate results
+            const cardFee = carPrice * (cardFeePercent / 100);
+            const pointsEarned = carPrice * pointsRate;
+            const valueOfPoints = pointsEarned * pointsValue;
+            
+            // Display results
+            document.getElementById('resultPrice').textContent = carPrice.toFixed(2);
+            document.getElementById('resultFee').textContent = cardFee.toFixed(2);
+            document.getElementById('resultFeePercent').textContent = cardFeePercent.toFixed(2);
+            document.getElementById('resultPoints').textContent = Math.round(pointsEarned).toLocaleString();
+            document.getElementById('resultPointsValue').textContent = valueOfPoints.toFixed(2);
+            
+            // Conclusion
+            const conclusion = document.getElementById('conclusion');
+            if (valueOfPoints > cardFee) {
+                const profit = valueOfPoints - cardFee;
+                conclusion.innerHTML = '<span class="worth-it">WORTH IT!</span> The value of Qantas points ($' + 
+                    valueOfPoints.toFixed(2) + ') is greater than the credit card fee ($' + 
+                    cardFee.toFixed(2) + ').<br>Net benefit: $' + profit.toFixed(2);
+            } else {
+                const loss = cardFee - valueOfPoints;
+                conclusion.innerHTML = '<span class="not-worth-it">NOT WORTH IT!</span> The credit card fee ($' + 
+                    cardFee.toFixed(2) + ') is greater than the value of Qantas points ($' + 
+                    valueOfPoints.toFixed(2) + ').<br>Net loss: $' + loss.toFixed(2);
+            }
+            
+            // Show results
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html> 
